@@ -7,10 +7,8 @@ const Bin = ({ type, label, onDropCorrect }) => {
     e.preventDefault();
     setIsOver(false);
     
-    // Obtenemos el tipo que enviamos en handleDragStart
     const draggedType = e.dataTransfer.getData("itemType");
     
-    // Comparamos el tipo del objeto con el tipo de este contenedor
     onDropCorrect(draggedType === type);
   };
 

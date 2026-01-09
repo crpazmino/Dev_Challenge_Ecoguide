@@ -5,14 +5,12 @@ import Bin from './components/Bin';
 import './App.css';
 
 function App() {
-  // --- ESTADOS ---
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [wasteData, setWasteData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState({ text: "¡Bienvenido! Clasifica el objeto", color: "#333" });
 
-  // --- CARGAR DATOS DE LA DB ---
   useEffect(() => {
     if (user) {
       fetch('http://localhost:5000/api/residuos')
@@ -25,7 +23,6 @@ function App() {
     }
   }, [user]);
 
-  // --- LÓGICA DEL JUEGO ---
   const currentItem = wasteData[currentIndex];
 
   const handleDragStart = (e, item) => {
@@ -36,7 +33,6 @@ function App() {
   const onDropResult = async (isCorrect) => {
     if (!currentItem) return;
 
-    // Enviar resultado al historial del Backend
     try {
       await fetch('http://localhost:5000/api/historial', {
         method: 'POST',
@@ -51,7 +47,6 @@ function App() {
       console.error("Error guardando historial:", err);
     }
 
-    // Feedback visual y cambio de objeto
     if (isCorrect) {
       setFeedback({ text: `✅ ¡Correcto! ${currentItem.consejo}`, color: "#2ecc71" });
       setTimeout(() => {
@@ -76,14 +71,10 @@ function App() {
     setUser(null);
   };
 
-  // --- RENDERS CONDICIONALES ---
-
-  // 1. Si no hay usuario logueado
   if (!user) {
     return <Auth onLogin={(userData) => setUser(userData)} />;
   }
 
-  // 2. Si está cargando datos de la DB
   if (loading) {
     return (
       <div className="app-container">
@@ -92,7 +83,6 @@ function App() {
     );
   }
 
-  // 3. Interfaz del Juego
   return (
     <div className="app-container">
       <header className="main-header">

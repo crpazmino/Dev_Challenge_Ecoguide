@@ -23,7 +23,6 @@ const Auth = ({ onLogin }) => {
       if (!response.ok) throw new Error(data.error || 'Algo salió mal');
 
       if (!isRegister) {
-        // Guardamos el token y los datos del usuario
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         onLogin(data.user);

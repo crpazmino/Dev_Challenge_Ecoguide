@@ -1,6 +1,3 @@
-/* =========================================
-   ESTILOS GLOBALES Y VARIABLES
-   ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
 :root {
@@ -34,9 +31,6 @@ body {
   padding: 20px;
 }
 
-/* =========================================
-   HEADER (Encabezado)
-   ========================================= */
 .main-header {
   display: flex;
   justify-content: space-between;
@@ -60,7 +54,6 @@ body {
   color: #2c3e50;
 }
 
-/* BOTÓN CERRAR SESIÓN */
 .btn-logout {
   background-color: #ffffff;
   color: #e74c3c;
@@ -77,9 +70,6 @@ body {
   color: white;
 }
 
-/* =========================================
-   ÁREA DE JUEGO
-   ========================================= */
 .game-area {
   background: white;
   border-radius: 25px;
@@ -88,7 +78,6 @@ body {
   text-align: center;
 }
 
-/* FEEDBACK (Mensajes) */
 .feedback-hub {
   min-height: 70px;
   font-size: 1.15rem;
@@ -103,7 +92,6 @@ body {
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* OBJETO A RECICLAR (WasteItem) */
 .waste-display {
   display: flex;
   justify-content: center;
@@ -135,9 +123,6 @@ body {
   color: #444;
 }
 
-/* =========================================
-   CONTENEDORES (Bins)
-   ========================================= */
 .bins-layout {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -156,7 +141,6 @@ body {
   transition: var(--transition);
 }
 
-/* Tapa del contenedor */
 .bin::after {
   content: '';
   position: absolute;
@@ -176,7 +160,6 @@ body {
   z-index: 2;
 }
 
-/* COLORES DE BINS */
 .bin.yellow { background: var(--yellow-bin); box-shadow: 0 8px 0 #d4ac0d; }
 .bin.blue   { background: var(--blue-bin);   box-shadow: 0 8px 0 #2980b9; }
 .bin.green  { background: var(--green-bin);  box-shadow: 0 8px 0 #27ae60; }
@@ -187,15 +170,11 @@ body {
   background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
 }
 
-/* Efecto al arrastrar encima */
 .bin-active {
   transform: scale(1.05) translateY(-10px);
   filter: brightness(1.1);
 }
 
-/* =========================================
-   AUTH (Login / Registro)
-   ========================================= */
 .auth-container {
   display: flex;
   justify-content: center;
@@ -243,7 +222,6 @@ body {
   opacity: 0.9;
 }
 
-/* Responsividad */
 @media (max-width: 600px) {
   .bins-layout { grid-template-columns: 1fr 1fr; }
   .main-header h1 { font-size: 1.8rem; }

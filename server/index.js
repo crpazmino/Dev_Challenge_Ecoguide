@@ -7,11 +7,9 @@ require('dotenv').config();
 
 const app = express();
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Conexión a PostgreSQL
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -20,9 +18,7 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-// --- RUTAS DE AUTENTICACIÓN ---
 
-// Registro de Usuario
 app.post('/api/auth/register', async (req, res) => {
   const { nombre, email, password } = req.body;
   try {
@@ -37,7 +33,6 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-// Login de Usuario
 app.post('/api/auth/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -54,9 +49,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// --- RUTAS DEL JUEGO ---
 
-// Obtener todos los residuos
 app.get('/api/residuos', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM residuos ORDER BY RANDOM()');
@@ -66,17 +59,14 @@ app.get('/api/residuos', async (req, res) => {
   }
 });
 
-// Guardar resultado en historial y sumar puntos
 app.post('/api/historial', async (req, res) => {
   const { usuario_id, residuo_id, acierto } = req.body;
   try {
-    // 1. Registrar en historial
     await pool.query(
       'INSERT INTO historial (usuario_id, residuo_id, acierto) VALUES ($1, $2, $3)',
       [usuario_id, residuo_id, acierto]
     );
 
-    // 2. Si acertó, sumar 10 puntos al perfil del usuario
     if (acierto) {
       await pool.query('UPDATE usuarios SET puntos = puntos + 10 WHERE id = $1', [usuario_id]);
     }
@@ -87,7 +77,6 @@ app.post('/api/historial', async (req, res) => {
   }
 });
 
-// Obtener perfil e historial del usuario
 app.get('/api/usuario/:id', async (req, res) => {
   const { id } = req.params;
   try {
