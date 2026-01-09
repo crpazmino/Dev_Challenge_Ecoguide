@@ -1,38 +1,250 @@
-.App {
+/* =========================================
+   ESTILOS GLOBALES Y VARIABLES
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+:root {
+  --bg-color: #f0f4f8;
+  --text-main: #2c3e50;
+  --yellow-bin: #f1c40f;
+  --blue-bin: #3498db;
+  --green-bin: #2ecc71;
+  --grey-bin: #95a5a6;
+  --special-bin: #2d3436;
+  --shadow: 0 10px 20px rgba(0,0,0,0.08);
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.app-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* =========================================
+   HEADER (Encabezado)
+   ========================================= */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 15px 0;
+}
+
+.main-header h1 {
+  font-size: 2.5rem;
+  color: #27ae60;
+  font-weight: 800;
+}
+
+.user-info p {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+}
+
+.user-info strong {
+  color: #2c3e50;
+}
+
+/* BOTÓN CERRAR SESIÓN */
+.btn-logout {
+  background-color: #ffffff;
+  color: #e74c3c;
+  border: 2px solid #e74c3c;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* =========================================
+   ÁREA DE JUEGO
+   ========================================= */
+.game-area {
+  background: white;
+  border-radius: 25px;
+  padding: 40px;
+  box-shadow: var(--shadow);
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* FEEDBACK (Mensajes) */
+.feedback-hub {
+  min-height: 70px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 40px;
+  padding: 15px 30px;
+  border-radius: 15px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* OBJETO A RECICLAR (WasteItem) */
+.waste-display {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.waste-item {
+  width: 150px;
+  height: 150px;
+  background: white;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  cursor: grab;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+  border: 1px solid #eee;
+  transition: var(--transition);
+}
+
+.waste-item:hover {
+  transform: translateY(-8px) rotate(2deg);
+}
+
+.waste-item p {
+  margin-top: 10px;
+  font-weight: 700;
+  color: #444;
+}
+
+/* =========================================
+   CONTENEDORES (Bins)
+   ========================================= */
+.bins-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+}
+
+.bin {
+  height: 200px;
+  border-radius: 15px 15px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 20px;
+  position: relative;
+  transition: var(--transition);
+}
+
+/* Tapa del contenedor */
+.bin::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 35px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 15px 15px 0 0;
+}
+
+.bin-label {
   color: white;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  text-shadow: 1px 2px 4px rgba(0,0,0,0.3);
+  z-index: 2;
 }
 
-.App-link {
-  color: #61dafb;
+/* COLORES DE BINS */
+.bin.yellow { background: var(--yellow-bin); box-shadow: 0 8px 0 #d4ac0d; }
+.bin.blue   { background: var(--blue-bin);   box-shadow: 0 8px 0 #2980b9; }
+.bin.green  { background: var(--green-bin);  box-shadow: 0 8px 0 #27ae60; }
+.bin.grey   { background: var(--grey-bin);   box-shadow: 0 8px 0 #7f8c8d; }
+.bin.special { 
+  background: var(--special-bin); 
+  box-shadow: 0 8px 0 #1e272e;
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Efecto al arrastrar encima */
+.bin-active {
+  transform: scale(1.05) translateY(-10px);
+  filter: brightness(1.1);
+}
+
+/* =========================================
+   AUTH (Login / Registro)
+   ========================================= */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+}
+
+.auth-form {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 15px;
+  border: 2px solid #f1f2f6;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.auth-form input:focus {
+  border-color: var(--green-bin);
+  outline: none;
+}
+
+.btn-main {
+  width: 100%;
+  padding: 14px;
+  background: var(--green-bin);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-main:hover {
+  opacity: 0.9;
+}
+
+/* Responsividad */
+@media (max-width: 600px) {
+  .bins-layout { grid-template-columns: 1fr 1fr; }
+  .main-header h1 { font-size: 1.8rem; }
 }
