@@ -1,77 +1,154 @@
 import React, { useState } from 'react';
+import EditProfile from './EditProfile';
+import './Auth.css';
 
-const Auth = ({ onLogin }) => {
-  const [isRegister, setIsRegister] = useState(false);
-  const [formData, setFormData] = useState({ nombre: '', email: '', password: '' });
-  const [error, setError] = useState('');
+const Auth = () => {
+  const [modo, setModo] = useState('login'); // 'login' o 'register'
+  const [usuarioActual, setUsuarioActual] = useState(null);
+  const [mostrarEditProfile, setMostrarEditProfile] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    nombre: '',
+    email: '',
+    password: ''
+  });
+
+  const handleLoginSuccess = (usuarioData) => {
+    setUsuarioActual(usuarioData);
+    localStorage.setItem('usuario', JSON.stringify(usuarioData));
+    setMostrarEditProfile(false);
+  };
+
+  const handleActualizarPerfil = (usuarioActualizado) => {
+    setUsuarioActual(usuarioActualizado);
+    localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+    setMostrarEditProfile(false);
+  };
+
+  const handleEliminarCuenta = () => {
+    setUsuarioActual(null);
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('token');
+    setMostrarEditProfile(false);
+    setModo('login');
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    
-    const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
-    
-    try {
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || 'Algo salió mal');
-
-      if (!isRegister) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        onLogin(data.user);
-      } else {
-        alert("Registro exitoso, ahora inicia sesión");
-        setIsRegister(false);
-      }
-    } catch (err) {
-      setError(err.message);
-    }
+    // Aquí va tu lógica de login/registro existente
   };
 
+  // SI EL USUARIO YA ESTÁ AUTENTICADO Y QUIERE EDITAR PERFIL
+  if (usuarioActual && mostrarEditProfile) {
+    return (
+      <EditProfile 
+        usuario={usuarioActual}
+        onActualizar={handleActualizarPerfil}
+        onCancelar={() => setMostrarEditProfile(false)}
+        onEliminarCuenta={handleEliminarCuenta}
+      />
+    );
+  }
+
+  // SI EL USUARIO YA ESTÁ AUTENTICADO (PERO NO EDITANDO)
+  if (usuarioActual) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card">
+          <h2>Bienvenido, {usuarioActual.nombre}!</h2>
+          <div className="user-info">
+            <p><strong>Email:</strong> {usuarioActual.email}</p>
+            <p><strong>Puntos:</strong> {usuarioActual.puntos || 0}</p>
+            <p><strong>CO₂ evitado:</strong> {usuarioActual.co2_evitado || 0} kg</p>
+          </div>
+          <div className="auth-actions">
+            <button 
+              onClick={() => setMostrarEditProfile(true)}
+              className="btn btn-primary"
+            >
+              ✏️ Editar Perfil
+            </button>
+            <button 
+              onClick={() => {
+                setUsuarioActual(null);
+                localStorage.clear();
+              }}
+              className="btn btn-secondary"
+            >
+              🚪 Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // FORMULARIO DE LOGIN/REGISTRO (cuando no hay usuario)
   return (
     <div className="auth-container">
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <h2>{isRegister ? 'Crear Cuenta' : 'Iniciar Sesión'}</h2>
-        {error && <p className="error-msg">{error}</p>}
+      <div className="auth-card">
+        <h2>{modo === 'login' ? 'Iniciar Sesión' : 'Registrarse'}</h2>
         
-        {isRegister && (
-          <input 
-            type="text" 
-            placeholder="Nombre" 
-            onChange={(e) => setFormData({...formData, nombre: e.target.value})} 
-            required 
-          />
-        )}
+        <form onSubmit={handleSubmit}>
+          {modo === 'register' && (
+            <div className="form-group">
+              <label>Nombre</label>
+              <input
+                type="text"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          )}
+          
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label>Contraseña</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          
+          <button type="submit" className="btn btn-primary">
+            {modo === 'login' ? 'Entrar al Sistema' : 'Registrarse'}
+          </button>
+        </form>
         
-        <input 
-          type="email" 
-          placeholder="Email" 
-          onChange={(e) => setFormData({...formData, email: e.target.value})} 
-          required 
-        />
-        
-        <input 
-          type="password" 
-          placeholder="Contraseña" 
-          onChange={(e) => setFormData({...formData, password: e.target.value})} 
-          required 
-        />
-
-        <button type="submit" className="btn-main">
-          {isRegister ? 'Registrarse' : 'Entrar'}
-        </button>
-
-        <p onClick={() => setIsRegister(!isRegister)} className="switch-auth">
-          {isRegister ? '¿Ya tienes cuenta? Loguéate' : '¿No tienes cuenta? Regístrate'}
+        <p className="auth-switch">
+          {modo === 'login' 
+            ? '¿No tienes cuenta? ' 
+            : '¿Ya tienes cuenta? '}
+          <button 
+            onClick={() => setModo(modo === 'login' ? 'register' : 'login')}
+            className="btn-link"
+          >
+            {modo === 'login' ? 'Regístrate gratis' : 'Iniciar Sesión'}
+          </button>
         </p>
-      </form>
+      </div>
     </div>
   );
 };
